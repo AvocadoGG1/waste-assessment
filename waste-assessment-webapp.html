@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RECYKOOL Waste Assessment</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .export-buttons {
+            max-width: 850px;
+            margin: 0 auto 20px;
+            display: flex;
+            gap: 15px;
+        }
+        .export-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .pdf-btn {
+            background: #2c5f2d;
+            color: white;
+        }
+        .pdf-btn:hover {
+            background: #1e4620;
+        }
+        .jpg-btn {
+            background: #2563eb;
+            color: white;
+        }
+        .jpg-btn:hover {
+            background: #1e40af;
+        }
+        .form-container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 4px solid #2c5f2d;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2c5f2d;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .field-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        .field-group input, .field-group select, .field-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .field-group input:focus, .field-group select:focus, .field-group textarea:focus {
+            outline: none;
+            border-color: #2c5f2d;
+            box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+        }
+        .section-title {
+            background: #2c5f2d;
+            color: white;
+            padding: 12px 15px;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .checklist-item {
+            display: grid;
+            grid-template-columns: 250px 120px 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: start;
+        }
+        .checklist-label {
+            font-weight: bold;
+            padding-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th {
+            background: #e8f5e9;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        td input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        td input:focus {
+            outline: none;
+            border-color: #2c5f2d;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: Arial, sans-serif;
+        }
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            text-align: center;
+            color: #666;
+            font-size: 12px;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .export-buttons {
+                display: none;
+            }
+            .form-container {
+                box-shadow: none;
+                padding: 20px;
+            }
+        }
+        @media (max-width: 768px) {
+            .info-row {
+                grid-template-columns: 1fr;
+            }
+            .checklist-item {
+                grid-template-columns: 1fr;
+            }
+            .export-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="export-buttons">
+        <button class="export-btn pdf-btn" onclick="exportPDF()">
+            📄 Export to PDF
+        </button>
+        <button class="export-btn jpg-btn" onclick="exportImage()">
+            🖼️ Export to JPG
+        </button>
+    </div>
+
+    <div id="assessment-form" class="form-container">
+        <div class="header">
+            <h1>RECYKOOL WASTE ASSESSMENT</h1>
+            <p>Streamlined Form</p>
+        </div>
+
+        <div class="info-row">
+            <div class="field-group">
+                <label>Date:</label>
+                <input type="text" id="date" placeholder="MM/DD/YYYY">
+            </div>
+            <div class="field-group">
+                <label>Location #:</label>
+                <input type="text" id="location" placeholder="e.g., #5">
+            </div>
+            <div class="field-group">
+                <label>Conducted By:</label>
+                <input type="text" id="conductor" placeholder="Name">
+            </div>
+        </div>
+
+        <div class="section-title">Inspection / Compliance Checklist</div>
+        
+        <div class="checklist-item">
+            <div class="checklist-label">SB1383 Compliant</div>
+            <div class="field-group">
+                <select id="sb1383">
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <input type="text" id="sb1383-notes" placeholder="Notes">
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checklist-label">Bulky Items</div>
+            <div class="field-group">
+                <select id="bulky">
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <input type="text" id="bulky-notes" placeholder="Notes">
+            </div>
+        </div>
+
+        <div class="checklist-item">
+            <div class="checklist-label">Signage Visibility / Language Adequacy</div>
+            <div class="field-group">
+                <select id="signage">
+                    <option value="">Select</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <input type="text" id="signage-notes" placeholder="Notes">
+            </div>
+        </div>
+
+        <div class="section-title">Bin Fullness & Contamination</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Stream</th>
+                    <th style="width: 130px;">% Bin Fullness</th>
+                    <th style="width: 150px;">% Contamination</th>
+                    <th>Contamination Notes (what you observed)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>MSW</strong></td>
+                    <td><input type="number" id="msw-fullness" min="0" max="100" placeholder="0-100"></td>
+                    <td><input type="number" id="msw-contamination" min="0" max="100" placeholder="0-100"></td>
+                    <td><input type="text" id="msw-notes" placeholder="What you observed"></td>
+                </tr>
+                <tr>
+                    <td><strong>RCY</strong></td>
+                    <td><input type="number" id="rcy-fullness" min="0" max="100" placeholder="0-100"></td>
+                    <td><input type="number" id="rcy-contamination" min="0" max="100" placeholder="0-100"></td>
+                    <td><input type="text" id="rcy-notes" placeholder="What you observed"></td>
+                </tr>
+                <tr>
+                    <td><strong>ORG</strong></td>
+                    <td><input type="number" id="org-fullness" min="0" max="100" placeholder="0-100"></td>
+                    <td><input type="number" id="org-contamination" min="0" max="100" placeholder="0-100"></td>
+                    <td><input type="text" id="org-notes" placeholder="What you observed"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">Additional Notes / Discrepancies</div>
+        <div class="field-group">
+            <textarea id="additional-notes" placeholder="Any other observations, issues, or notes..."></textarea>
+        </div>
+
+        <div class="footer">
+            <strong>Photos attached separately</strong> | Bin configuration details available on property map
+        </div>
+    </div>
+
+    <script>
+        function exportPDF() {
+            window.print();
+        }
+
+        function exportImage() {
+            const form = document.getElementById('assessment-form');
+            const location = document.getElementById('location').value || 'form';
+            const date = document.getElementById('date').value || 'date';
+            
+            html2canvas(form, {
+                scale: 2,
+                backgroundColor: '#ffffff',
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `waste-assessment-${location}-${date}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                link.click();
+            }).catch(error => {
+                alert('Error creating image. Please try PDF export instead.');
+                console.error(error);
+            });
+        }
+    </script>
+</body>
+</html>
