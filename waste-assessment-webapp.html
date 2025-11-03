@@ -199,7 +199,6 @@
     <div id="assessment-form" class="form-container">
         <div class="header">
             <h1>RECYKOOL WASTE ASSESSMENT</h1>
-            <p>Streamlined Form</p>
         </div>
 
         <div class="info-row">
@@ -313,15 +312,32 @@
             const form = document.getElementById('assessment-form');
             const location = document.getElementById('location').value || 'form';
             const date = document.getElementById('date').value || 'date';
-            
+
+            // Fixed dimensions for consistent output
+            const TARGET_WIDTH = 1700;
+            const TARGET_HEIGHT = 2060;
+
             html2canvas(form, {
                 scale: 2,
                 backgroundColor: '#ffffff',
                 logging: false
             }).then(canvas => {
+                // Create a new canvas with fixed dimensions
+                const resizedCanvas = document.createElement('canvas');
+                resizedCanvas.width = TARGET_WIDTH;
+                resizedCanvas.height = TARGET_HEIGHT;
+                const ctx = resizedCanvas.getContext('2d');
+
+                // Fill with white background
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+                // Draw the original canvas scaled to fit the target dimensions
+                ctx.drawImage(canvas, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
                 const link = document.createElement('a');
                 link.download = `waste-assessment-${location}-${date}.jpg`;
-                link.href = canvas.toDataURL('image/jpeg', 0.95);
+                link.href = resizedCanvas.toDataURL('image/jpeg', 0.95);
                 link.click();
             }).catch(error => {
                 alert('Error creating image. Please try PDF export instead.');
