@@ -201,7 +201,7 @@
             <h1>RECYKOOL WASTE ASSESSMENT</h1>
         </div>
 
-        <div class="section-title" style="margin-bottom: 15px; background: #1e40af;">File Naming Information</div>
+        <div class="section-title" >File Naming Information</div>
         <div class="info-row">
             <div class="field-group">
                 <label>Photo Type:</label>
@@ -228,15 +228,10 @@
                 <input type="text" id="account-location" placeholder="e.g., 474-5596 or LOC#4">
             </div>
         </div>
-
-        <div class="info-row">
+        <div class="info-row" style="grid-template-columns: 1fr 1fr;">
             <div class="field-group">
                 <label>Date:</label>
                     <input type="date" id="date" name="selectedDate">
-            </div>
-            <div class="field-group">
-                <label>Location # / Account #:</label>
-                <input type="text" id="location" placeholder="e.g., #5">
             </div>
             <div class="field-group">
                 <label>Conducted By:</label>
@@ -275,7 +270,7 @@
         </div>
 
         <div class="checklist-item">
-            <div class="checklist-label">Signage Visibility / Language Adequacy</div>
+            <div class="checklist-label">Signage Visibility</div>
             <div class="field-group">
                 <select id="signage">
                     <option value="">Select</option>
@@ -321,7 +316,7 @@
             </tbody>
         </table>
 
-        <div class="section-title">Additional Notes / Discrepancies</div>
+        <div class="section-title">Additional Notes</div>
         <div class="field-group">
             <textarea id="additional-notes" placeholder="Any other observations, issues, or notes..."></textarea>
         </div>
@@ -361,14 +356,15 @@
             // Create filename: [PhotoType]_[Initials]_[Account#]_[MDDYYYY]
             const filename = `${photoType}_${initials}_${accountLocation}_${formattedDate}.jpg`;
 
-            // Fixed dimensions for consistent output
-            const TARGET_WIDTH = 1700;
-            const TARGET_HEIGHT = 2060;
+            // Fixed dimensions for consistent high-quality output
+            const TARGET_WIDTH = 2550;
+            const TARGET_HEIGHT = 3300;
 
             html2canvas(form, {
-                scale: 2,
+                scale: 3,
                 backgroundColor: '#ffffff',
-                logging: false
+                logging: false,
+                useCORS: true
             }).then(canvas => {
                 // Create a new canvas with fixed dimensions
                 const resizedCanvas = document.createElement('canvas');
