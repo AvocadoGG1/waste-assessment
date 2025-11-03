@@ -232,7 +232,8 @@
                 </select>
             </div>
             <div class="field-group">
-                <input type="text" id="sb1383-notes" placeholder="Notes">
+                <label style="font-size: 11px; font-weight: bold; color: #666; margin-bottom: 5px; display: block;">NOTES:</label>
+                <input type="text" id="sb1383-notes" >
             </div>
         </div>
 
@@ -246,7 +247,8 @@
                 </select>
             </div>
             <div class="field-group">
-                <input type="text" id="bulky-notes" placeholder="Notes">
+                <label style="font-size: 11px; font-weight: bold; color: #666; margin-bottom: 5px; display: block;">NOTES:</label>
+                <input type="text" id="bulky-notes" >
             </div>
         </div>
 
@@ -260,7 +262,8 @@
                 </select>
             </div>
             <div class="field-group">
-                <input type="text" id="signage-notes" placeholder="Notes">
+                <label style="font-size: 11px; font-weight: bold; color: #666; margin-bottom: 5px; display: block;">NOTES:</label>
+                <input type="text" id="signage-notes">
             </div>
         </div>
 
@@ -272,27 +275,27 @@
                     <th style="width: 80px;">Stream</th>
                     <th style="width: 130px;">% Bin Fullness</th>
                     <th style="width: 150px;">% Contamination</th>
-                    <th>Contamination Notes (what you observed)</th>
+                    <th><strong>Notes:</strong> Describe what you observed</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><strong>MSW</strong></td>
-                    <td><input type="number" id="msw-fullness" min="0" max="100" placeholder="0-100"></td>
-                    <td><input type="number" id="msw-contamination" min="0" max="100" placeholder="0-100"></td>
-                    <td><textarea id="msw-notes" placeholder="What you observed" rows="2"></textarea></td>
+                    <td><input type="number" id="msw-fullness" min="0" max="100" ></td>
+                    <td><input type="number" id="msw-contamination" min="0" max="100" ></td>
+                    <td><textarea id="msw-notes" rows="2"></textarea></td>
                 </tr>
                 <tr>
                     <td><strong>RCY</strong></td>
-                    <td><input type="number" id="rcy-fullness" min="0" max="100" placeholder="0-100"></td>
-                    <td><input type="number" id="rcy-contamination" min="0" max="100" placeholder="0-100"></td>
-                    <td><textarea id="rcy-notes" placeholder="What you observed" rows="2"></textarea></td>
+                    <td><input type="number" id="rcy-fullness" min="0" max="100" ></td>
+                    <td><input type="number" id="rcy-contamination" min="0" max="100" ></td>
+                    <td><textarea id="rcy-notes" rows="2"></textarea></td>
                 </tr>
                 <tr>
                     <td><strong>ORG</strong></td>
-                    <td><input type="number" id="org-fullness" min="0" max="100" placeholder="0-100"></td>
-                    <td><input type="number" id="org-contamination" min="0" max="100" placeholder="0-100"></td>
-                    <td><textarea id="org-notes" placeholder="What you observed" rows="2"></textarea></td>
+                    <td><input type="number" id="org-fullness" min="0" max="100" ></td>
+                    <td><input type="number" id="org-contamination" min="0" max="100"></td>
+                    <td><textarea id="org-notes" rows="2"></textarea></td>
                 </tr>
             </tbody>
         </table>
