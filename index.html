@@ -201,31 +201,19 @@
             <h1>RECYKOOL WASTE ASSESSMENT</h1>
         </div>
 
-        <div class="section-title" >File Naming Information</div>
+        <div class="section-title" style="background: #1e40af;">File Naming Information</div>
         <div class="info-row">
             <div class="field-group">
-                <label>Photo Type:</label>
-                <select id="photo-type">
-                    <option value="">Select Type</option>
-                    <option value="MSWInside">MSW Inside</option>
-                    <option value="MSWOutside">MSW Outside</option>
-                    <option value="ORGInside">ORG Inside</option>
-                    <option value="ORGOutside">ORG Outside</option>
-                    <option value="RCYInside">RCY Inside</option>
-                    <option value="RCYOutside">RCY Outside</option>
-                    <option value="Meterstick">Meterstick</option>
-                    <option value="Distance">Distance</option>
-                    <option value="Enclosure">Enclosure</option>
-                    <option value="Bulk">Bulk</option>
-                </select>
+                <label>Account # / Location #:</label>
+                <input type="text" id="account-location" placeholder="e.g., LOC#4 or 474-5034">
             </div>
             <div class="field-group">
                 <label>Initials:</label>
-                <input type="text" id="initials" placeholder="e.g., JM">
+                <input type="text" id="initials" placeholder="e.g., AG">
             </div>
             <div class="field-group">
-                <label>Account # / Location #:</label>
-                <input type="text" id="account-location" placeholder="e.g., 474-5596 or LOC#4">
+                <label>Date:</label>
+                <input type="date" id="filename-date" name="filenameDate">
             </div>
         </div>
         <div class="info-row" style="grid-template-columns: 1fr 1fr;">
@@ -335,14 +323,13 @@
             const form = document.getElementById('assessment-form');
 
             // Get filename components
-            const photoType = document.getElementById('photo-type').value;
-            const initials = document.getElementById('initials').value;
             const accountLocation = document.getElementById('account-location').value;
-            const dateValue = document.getElementById('date').value;
+            const initials = document.getElementById('initials').value;
+            const dateValue = document.getElementById('filename-date').value;
 
             // Validate required fields
-            if (!photoType || !initials || !accountLocation || !dateValue) {
-                alert('Please fill in all File Naming Information fields:\n- Photo Type\n- Initials\n- Account # / Location #\n- Date');
+            if (!accountLocation || !initials || !dateValue) {
+                alert('Please fill in all File Naming Information fields:\n- Account # / Location #\n- Initials\n- Date');
                 return;
             }
 
@@ -353,8 +340,8 @@
             const year = dateParts[0];
             const formattedDate = `${month}${day}${year}`;
 
-            // Create filename: [PhotoType]_[Initials]_[Account#]_[MDDYYYY]
-            const filename = `${photoType}_${initials}_${accountLocation}_${formattedDate}.jpg`;
+            // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
+            const filename = `WA_${accountLocation}_${initials}_${formattedDate}.jpg`;
 
             // Fixed dimensions for consistent high-quality output
             const TARGET_WIDTH = 2550;
