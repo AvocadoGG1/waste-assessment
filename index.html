@@ -136,16 +136,21 @@
             padding: 10px;
             border: 1px solid #ddd;
         }
-        td input {
+        td input, td textarea {
             width: 100%;
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
+            font-family: Arial, sans-serif;
         }
-        td input:focus {
+        td input:focus, td textarea:focus {
             outline: none;
             border-color: #2c5f2d;
+        }
+        td textarea {
+            min-height: 60px;
+            resize: vertical;
         }
         textarea {
             min-height: 100px;
@@ -275,19 +280,19 @@
                     <td><strong>MSW</strong></td>
                     <td><input type="number" id="msw-fullness" min="0" max="100" placeholder="0-100"></td>
                     <td><input type="number" id="msw-contamination" min="0" max="100" placeholder="0-100"></td>
-                    <td><input type="text" id="msw-notes" placeholder="What you observed"></td>
+                    <td><textarea id="msw-notes" placeholder="What you observed" rows="2"></textarea></td>
                 </tr>
                 <tr>
                     <td><strong>RCY</strong></td>
                     <td><input type="number" id="rcy-fullness" min="0" max="100" placeholder="0-100"></td>
                     <td><input type="number" id="rcy-contamination" min="0" max="100" placeholder="0-100"></td>
-                    <td><input type="text" id="rcy-notes" placeholder="What you observed"></td>
+                    <td><textarea id="rcy-notes" placeholder="What you observed" rows="2"></textarea></td>
                 </tr>
                 <tr>
                     <td><strong>ORG</strong></td>
                     <td><input type="number" id="org-fullness" min="0" max="100" placeholder="0-100"></td>
                     <td><input type="number" id="org-contamination" min="0" max="100" placeholder="0-100"></td>
-                    <td><input type="text" id="org-notes" placeholder="What you observed"></td>
+                    <td><textarea id="org-notes" placeholder="What you observed" rows="2"></textarea></td>
                 </tr>
             </tbody>
         </table>
