@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <title>RECYKOOL Waste Assessment</title>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
@@ -17,8 +19,6 @@
             padding: 20px;
         }
         .export-buttons {
-            max-width: 850px;
-            margin: 0 auto 20px;
             display: flex;
             gap: 15px;
         }
@@ -187,21 +187,13 @@
     </style>
 </head>
 <body>
-    <div class="export-buttons">
-        <button class="export-btn pdf-btn" onclick="exportPDF()">
-            📄 Export to PDF
-        </button>
-        <button class="export-btn jpg-btn" onclick="exportImage()">
-            🖼️ Export to JPG
-        </button>
-    </div>
-
     <div id="assessment-form" class="form-container">
         <div class="header">
             <h1>RECYKOOL WASTE ASSESSMENT</h1>
+            
         </div>
 
-        <div class="section-title" style="background: #1e40af;">File Naming Information</div>
+        <div class="section-title">File Naming Information</div>
         <div class="info-row">
             <div class="field-group">
                 <label>Account # / Location #:</label>
@@ -209,11 +201,11 @@
             </div>
             <div class="field-group">
                 <label>Initials:</label>
-                <input type="text" id="initials" placeholder="e.g., AG">
+                <input type="text" id="initials" placeholder="e.g., JM">
             </div>
             <div class="field-group">
-                <label>Date:</label>
-                <input type="date" id="filename-date" name="filenameDate">
+                <label>Account # / Location #:</label>
+                <input type="text" id="account-location" placeholder="e.g., 474-5596 or LOC#4">
             </div>
         </div>
         <div class="info-row" style="grid-template-columns: 1fr 1fr;">
@@ -310,7 +302,16 @@
         </div>
 
         <div class="footer">
-            <strong>Photos attached separately</strong> | Bin configuration details available on property map. 
+            <strong>Photos attached separately</strong> | Bin configuration details available on property map.
+        </div>
+
+        <div class="export-buttons" style="margin-top: 30px;">
+            <button class="export-btn pdf-btn" onclick="exportPDF()">
+                📄 Export to PDF
+            </button>
+            <button class="export-btn jpg-btn" onclick="exportImage()">
+                🖼️ Export to JPG
+            </button>
         </div>
     </div>
 
@@ -323,13 +324,14 @@
             const form = document.getElementById('assessment-form');
 
             // Get filename components
-            const accountLocation = document.getElementById('account-location').value;
+            const photoType = document.getElementById('photo-type').value;
             const initials = document.getElementById('initials').value;
-            const dateValue = document.getElementById('filename-date').value;
+            const accountLocation = document.getElementById('account-location').value;
+            const dateValue = document.getElementById('date').value;
 
             // Validate required fields
-            if (!accountLocation || !initials || !dateValue) {
-                alert('Please fill in all File Naming Information fields:\n- Account # / Location #\n- Initials\n- Date');
+            if (!photoType || !initials || !accountLocation || !dateValue) {
+                alert('Please fill in all File Naming Information fields:\n- Photo Type\n- Initials\n- Account # / Location #\n- Date');
                 return;
             }
 
@@ -340,8 +342,8 @@
             const year = dateParts[0];
             const formattedDate = `${month}${day}${year}`;
 
-            // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
-            const filename = `WA_${accountLocation}_${initials}_${formattedDate}.jpg`;
+            // Create filename: [PhotoType]_[Initials]_[Account#]_[MDDYYYY]
+            const filename = `${photoType}_${initials}_${accountLocation}_${formattedDate}.jpg`;
 
             // Fixed dimensions for consistent high-quality output
             const TARGET_WIDTH = 2550;
