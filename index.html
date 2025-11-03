@@ -201,13 +201,41 @@
             <h1>RECYKOOL WASTE ASSESSMENT</h1>
         </div>
 
+        <div class="section-title" style="margin-bottom: 15px; background: #1e40af;">File Naming Information</div>
+        <div class="info-row">
+            <div class="field-group">
+                <label>Photo Type:</label>
+                <select id="photo-type">
+                    <option value="">Select Type</option>
+                    <option value="MSWInside">MSW Inside</option>
+                    <option value="MSWOutside">MSW Outside</option>
+                    <option value="ORGInside">ORG Inside</option>
+                    <option value="ORGOutside">ORG Outside</option>
+                    <option value="RCYInside">RCY Inside</option>
+                    <option value="RCYOutside">RCY Outside</option>
+                    <option value="Meterstick">Meterstick</option>
+                    <option value="Distance">Distance</option>
+                    <option value="Enclosure">Enclosure</option>
+                    <option value="Bulk">Bulk</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <label>Initials:</label>
+                <input type="text" id="initials" placeholder="e.g., JM">
+            </div>
+            <div class="field-group">
+                <label>Account # / Location #:</label>
+                <input type="text" id="account-location" placeholder="e.g., 474-5596 or LOC#4">
+            </div>
+        </div>
+
         <div class="info-row">
             <div class="field-group">
                 <label>Date:</label>
-                <input type="text" id="date" placeholder="MM/DD/YYYY">
+                    <input type="date" id="date" name="selectedDate">
             </div>
             <div class="field-group">
-                <label>Location #:</label>
+                <label>Location # / Account #:</label>
                 <input type="text" id="location" placeholder="e.g., #5">
             </div>
             <div class="field-group">
@@ -299,7 +327,7 @@
         </div>
 
         <div class="footer">
-            <strong>Photos attached separately</strong> | Bin configuration details available on property map
+            <strong>Photos attached separately</strong> | Bin configuration details available on property map. 
         </div>
     </div>
 
@@ -310,8 +338,28 @@
 
         function exportImage() {
             const form = document.getElementById('assessment-form');
-            const location = document.getElementById('location').value || 'form';
-            const date = document.getElementById('date').value || 'date';
+
+            // Get filename components
+            const photoType = document.getElementById('photo-type').value;
+            const initials = document.getElementById('initials').value;
+            const accountLocation = document.getElementById('account-location').value;
+            const dateValue = document.getElementById('date').value;
+
+            // Validate required fields
+            if (!photoType || !initials || !accountLocation || !dateValue) {
+                alert('Please fill in all File Naming Information fields:\n- Photo Type\n- Initials\n- Account # / Location #\n- Date');
+                return;
+            }
+
+            // Convert date from YYYY-MM-DD to MDDYYYY
+            const dateParts = dateValue.split('-');
+            const month = dateParts[1];
+            const day = dateParts[2];
+            const year = dateParts[0];
+            const formattedDate = `${month}${day}${year}`;
+
+            // Create filename: [PhotoType]_[Initials]_[Account#]_[MDDYYYY]
+            const filename = `${photoType}_${initials}_${accountLocation}_${formattedDate}.jpg`;
 
             // Fixed dimensions for consistent output
             const TARGET_WIDTH = 1700;
@@ -336,7 +384,7 @@
                 ctx.drawImage(canvas, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
 
                 const link = document.createElement('a');
-                link.download = `waste-assessment-${location}-${date}.jpg`;
+                link.download = filename;
                 link.href = resizedCanvas.toDataURL('image/jpeg', 0.95);
                 link.click();
             }).catch(error => {
