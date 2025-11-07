@@ -234,6 +234,10 @@
         .force-horizontal-layout .checklist-item {
             grid-template-columns: 250px 120px 1fr !important;
         }
+        /* Add black outline for exports */
+        .export-outline {
+            border: 3px solid #000000 !important;
+        }
         @media (max-width: 768px) {
             .info-row {
                 grid-template-columns: 1fr;
@@ -409,6 +413,9 @@
             // Force horizontal layout to override responsive media query
             form.classList.add('force-horizontal-layout');
 
+            // Add black outline for export
+            form.classList.add('export-outline');
+
             // Hide export buttons during capture
             const exportButtons = form.querySelector('.export-buttons');
             const originalButtonsDisplay = exportButtons ? exportButtons.style.display : '';
@@ -470,6 +477,9 @@
 
                     // Remove horizontal layout class
                     form.classList.remove('force-horizontal-layout');
+
+                    // Remove export outline
+                    form.classList.remove('export-outline');
 
                     // Restore export buttons
                     if (exportButtons) {
@@ -518,6 +528,9 @@
                     // Remove horizontal layout class
                     form.classList.remove('force-horizontal-layout');
 
+                    // Remove export outline
+                    form.classList.remove('export-outline');
+
                     // Restore export buttons
                     if (exportButtons) {
                         exportButtons.style.display = originalButtonsDisplay;
@@ -561,6 +574,9 @@
 
             // Force horizontal layout to override responsive media query
             form.classList.add('force-horizontal-layout');
+
+            // Add black outline for export
+            form.classList.add('export-outline');
 
             // Hide export buttons during capture
             const exportButtons = form.querySelector('.export-buttons');
@@ -624,6 +640,9 @@
                     // Remove horizontal layout class
                     form.classList.remove('force-horizontal-layout');
 
+                    // Remove export outline
+                    form.classList.remove('export-outline');
+
                     // Restore export buttons
                     if (exportButtons) {
                         exportButtons.style.display = originalButtonsDisplay;
@@ -663,6 +682,9 @@
 
                     // Remove horizontal layout class
                     form.classList.remove('force-horizontal-layout');
+
+                    // Remove export outline
+                    form.classList.remove('export-outline');
 
                     // Restore export buttons
                     if (exportButtons) {
