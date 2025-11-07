@@ -7,7 +7,7 @@
     <title>RECYKOOL Waste Assessment</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -390,20 +390,127 @@
             const year = dateParts[0];
             const formattedDate = `${month}${day}${year}`;
 
-            // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
+            // Create filename
             const filename = `WA_${accountLocation}_${initials}_${formattedDate}.pdf`;
 
-            // Configure PDF options
-            const opt = {
-                margin: 0.5,
-                filename: filename,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-            };
+            // Save original form width and set to fixed width for consistent export
+            const originalWidth = form.style.width;
+            const originalMaxWidth = form.style.maxWidth;
+            form.style.width = '850px';
+            form.style.maxWidth = '850px';
 
-            // Generate PDF
-            html2pdf().set(opt).from(form).save();
+            // Hide export buttons during capture
+            const exportButtons = form.querySelector('.export-buttons');
+            const originalButtonsDisplay = exportButtons ? exportButtons.style.display : '';
+            if (exportButtons) {
+                exportButtons.style.display = 'none';
+            }
+
+            // Replace textareas with divs to show full content
+            const textareas = form.querySelectorAll('textarea');
+            const replacements = [];
+
+            textareas.forEach((textarea) => {
+                if (textarea.value.trim() !== '') {
+                    const div = document.createElement('div');
+                    div.style.cssText = window.getComputedStyle(textarea).cssText;
+                    div.style.whiteSpace = 'pre-wrap';
+                    div.style.wordWrap = 'break-word';
+                    div.style.height = 'auto';
+                    div.style.minHeight = 'auto';
+                    div.style.overflow = 'visible';
+                    div.style.border = '1px solid #ddd';
+                    div.style.borderRadius = '4px';
+                    div.style.padding = '8px';
+                    div.textContent = textarea.value;
+
+                    const parent = textarea.parentNode;
+                    const nextSibling = textarea.nextSibling;
+                    parent.insertBefore(div, textarea);
+                    parent.removeChild(textarea);
+                    replacements.push({ div, parent, nextSibling, textarea });
+                }
+            });
+
+            // Fixed dimensions for consistent high-quality output
+            const TARGET_WIDTH = 2550;
+            const TARGET_HEIGHT = 3300;
+
+            // Wait for browser to render before capturing
+            setTimeout(() => {
+                html2canvas(form, {
+                    scale: 3,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: true
+                }).then(canvas => {
+                    // Restore textareas and remove replacement divs
+                    replacements.forEach(({ div, parent, nextSibling, textarea }) => {
+                        parent.removeChild(div);
+                        if (nextSibling) {
+                            parent.insertBefore(textarea, nextSibling);
+                        } else {
+                            parent.appendChild(textarea);
+                        }
+                    });
+
+                    // Restore original form width
+                    form.style.width = originalWidth;
+                    form.style.maxWidth = originalMaxWidth;
+
+                    // Restore export buttons
+                    if (exportButtons) {
+                        exportButtons.style.display = originalButtonsDisplay;
+                    }
+
+                    // Create a new canvas with fixed dimensions
+                    const resizedCanvas = document.createElement('canvas');
+                    resizedCanvas.width = TARGET_WIDTH;
+                    resizedCanvas.height = TARGET_HEIGHT;
+                    const ctx = resizedCanvas.getContext('2d');
+
+                    // Fill with white background
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+                    // Draw the original canvas scaled to fit the target dimensions
+                    ctx.drawImage(canvas, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+                    // Convert canvas to PDF
+                    const imgData = resizedCanvas.toDataURL('image/jpeg', 0.95);
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF({
+                        orientation: 'portrait',
+                        unit: 'px',
+                        format: [TARGET_WIDTH, TARGET_HEIGHT]
+                    });
+
+                    pdf.addImage(imgData, 'JPEG', 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+                    pdf.save(filename);
+                }).catch(error => {
+                    // Restore textareas and remove divs even on error
+                    replacements.forEach(({ div, parent, nextSibling, textarea }) => {
+                        parent.removeChild(div);
+                        if (nextSibling) {
+                            parent.insertBefore(textarea, nextSibling);
+                        } else {
+                            parent.appendChild(textarea);
+                        }
+                    });
+
+                    // Restore original form width
+                    form.style.width = originalWidth;
+                    form.style.maxWidth = originalMaxWidth;
+
+                    // Restore export buttons
+                    if (exportButtons) {
+                        exportButtons.style.display = originalButtonsDisplay;
+                    }
+
+                    alert('Error creating PDF. Please try again.');
+                    console.error(error);
+                });
+            }, 200); // Wait 200ms for layout to update and buttons to hide
         }
 
         function exportImage() {
