@@ -200,6 +200,7 @@
                 padding: 8px 12px;
                 margin-bottom: 12px;
                 font-size: 14px;
+                background: #2c5f2d !important;
             }
             .info-row {
                 margin-bottom: 15px;
@@ -213,6 +214,9 @@
             }
             th, td {
                 padding: 6px;
+            }
+            th {
+                background: #e8f5e9 !important;
             }
             textarea {
                 border: 1px solid #ddd !important;
@@ -238,7 +242,7 @@
             
         </div>
 
-        <div class="section-title">File Naming Information</div>
+        <div class="section-title">Header</div>
         <div class="info-row">
             <div class="field-group">
                 <label>Account # / Location #:</label>
@@ -260,7 +264,7 @@
             </div>
         </div>
 
-        <div class="section-title">Inspection / Compliance Checklist</div>
+        <div class="section-title">Inspection Checklist</div>
         
         <div class="checklist-item">
             <div class="checklist-label">SB1383 Compliant</div>
@@ -315,7 +319,7 @@
                     <th style="width: 80px;">Stream</th>
                     <th style="width: 130px;">% Bin Fullness (0-100)</th>
                     <th style="width: 150px;">% Contamination (0-100)</th>
-                    <th><strong>Notes:</strong> Describe what you observed</th>
+                    <th>Notes: Describe contamination observed</th>
                 </tr>
             </thead>
             <tbody>
@@ -388,42 +392,14 @@
             // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
             const filename = `WA_${accountLocation}_${initials}_${formattedDate}.jpg`;
 
-            // Save original form width and set to fixed width for consistent export
-            const originalWidth = form.style.width;
-            const originalMaxWidth = form.style.maxWidth;
-            form.style.width = '850px';
-            form.style.maxWidth = '850px';
-
-            // Hide export buttons during capture
-            const exportButtons = form.querySelector('.export-buttons');
-            const originalButtonsDisplay = exportButtons ? exportButtons.style.display : '';
-            if (exportButtons) {
-                exportButtons.style.display = 'none';
-            }
-
-            // Replace textareas with divs to show full content
+            // Expand only textareas with content to show full text before export
             const textareas = form.querySelectorAll('textarea');
-            const replacements = [];
-
-            textareas.forEach((textarea) => {
+            const originalHeights = [];
+            textareas.forEach((textarea, index) => {
+                originalHeights[index] = textarea.style.height;
                 if (textarea.value.trim() !== '') {
-                    const div = document.createElement('div');
-                    div.style.cssText = window.getComputedStyle(textarea).cssText;
-                    div.style.whiteSpace = 'pre-wrap';
-                    div.style.wordWrap = 'break-word';
-                    div.style.height = 'auto';
-                    div.style.minHeight = 'auto';
-                    div.style.overflow = 'visible';
-                    div.style.border = '1px solid #ddd';
-                    div.style.borderRadius = '4px';
-                    div.style.padding = '8px';
-                    div.textContent = textarea.value;
-
-                    const parent = textarea.parentNode;
-                    const nextSibling = textarea.nextSibling;
-                    parent.insertBefore(div, textarea);
-                    parent.removeChild(textarea);
-                    replacements.push({ div, parent, nextSibling, textarea });
+                    textarea.style.height = 'auto';
+                    textarea.style.height = textarea.scrollHeight + 'px';
                 }
             });
 
@@ -431,32 +407,16 @@
             const TARGET_WIDTH = 2550;
             const TARGET_HEIGHT = 3300;
 
-            // Wait for browser to render before capturing
-            setTimeout(() => {
-                html2canvas(form, {
+            html2canvas(form, {
                 scale: 3,
                 backgroundColor: '#ffffff',
                 logging: false,
                 useCORS: true
             }).then(canvas => {
-                // Restore textareas and remove replacement divs
-                replacements.forEach(({ div, parent, nextSibling, textarea }) => {
-                    parent.removeChild(div);
-                    if (nextSibling) {
-                        parent.insertBefore(textarea, nextSibling);
-                    } else {
-                        parent.appendChild(textarea);
-                    }
+                // Restore original textarea heights
+                textareas.forEach((textarea, index) => {
+                    textarea.style.height = originalHeights[index];
                 });
-
-                // Restore original form width
-                form.style.width = originalWidth;
-                form.style.maxWidth = originalMaxWidth;
-
-                // Restore export buttons
-                if (exportButtons) {
-                    exportButtons.style.display = originalButtonsDisplay;
-                }
 
                 // Create a new canvas with fixed dimensions
                 const resizedCanvas = document.createElement('canvas');
@@ -476,29 +436,13 @@
                 link.href = resizedCanvas.toDataURL('image/jpeg', 0.95);
                 link.click();
             }).catch(error => {
-                // Restore textareas and remove divs even on error
-                replacements.forEach(({ div, parent, nextSibling, textarea }) => {
-                    parent.removeChild(div);
-                    if (nextSibling) {
-                        parent.insertBefore(textarea, nextSibling);
-                    } else {
-                        parent.appendChild(textarea);
-                    }
+                // Restore original textarea heights even on error
+                textareas.forEach((textarea, index) => {
+                    textarea.style.height = originalHeights[index];
                 });
-
-                // Restore original form width
-                form.style.width = originalWidth;
-                form.style.maxWidth = originalMaxWidth;
-
-                // Restore export buttons
-                if (exportButtons) {
-                    exportButtons.style.display = originalButtonsDisplay;
-                }
-
                 alert('Error creating image. Please try PDF export instead.');
                 console.error(error);
             });
-            }, 200); // Wait 200ms for layout to update and buttons to hide
         }
     </script>
 </body>
