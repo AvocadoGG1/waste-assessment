@@ -414,11 +414,15 @@
                     div.style.height = 'auto';
                     div.style.minHeight = 'auto';
                     div.style.overflow = 'visible';
+                    div.style.border = '1px solid #ddd';
+                    div.style.borderRadius = '4px';
                     div.textContent = textarea.value;
 
-                    textarea.parentNode.insertBefore(div, textarea);
-                    textarea.style.display = 'none';
-                    replacements.push({ textarea, div });
+                    const parent = textarea.parentNode;
+                    const nextSibling = textarea.nextSibling;
+                    parent.insertBefore(div, textarea);
+                    parent.removeChild(textarea);
+                    replacements.push({ div, parent, nextSibling, textarea });
                 }
             });
 
@@ -435,9 +439,13 @@
                 useCORS: true
             }).then(canvas => {
                 // Restore textareas and remove replacement divs
-                replacements.forEach(({ textarea, div }) => {
-                    textarea.style.display = '';
-                    div.remove();
+                replacements.forEach(({ div, parent, nextSibling, textarea }) => {
+                    parent.removeChild(div);
+                    if (nextSibling) {
+                        parent.insertBefore(textarea, nextSibling);
+                    } else {
+                        parent.appendChild(textarea);
+                    }
                 });
 
                 // Restore original form width
@@ -468,9 +476,13 @@
                 link.click();
             }).catch(error => {
                 // Restore textareas and remove divs even on error
-                replacements.forEach(({ textarea, div }) => {
-                    textarea.style.display = '';
-                    div.remove();
+                replacements.forEach(({ div, parent, nextSibling, textarea }) => {
+                    parent.removeChild(div);
+                    if (nextSibling) {
+                        parent.insertBefore(textarea, nextSibling);
+                    } else {
+                        parent.appendChild(textarea);
+                    }
                 });
 
                 // Restore original form width
@@ -485,7 +497,7 @@
                 alert('Error creating image. Please try PDF export instead.');
                 console.error(error);
             });
-            }, 100); // Wait 100ms for layout to update
+            }, 200); // Wait 200ms for layout to update and buttons to hide
         }
     </script>
 </body>
