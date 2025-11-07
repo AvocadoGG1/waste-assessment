@@ -157,7 +157,7 @@
             resize: vertical;
         }
         textarea {
-            min-height: 60px;
+            min-height: 100px;
             resize: vertical;
             font-family: Arial, sans-serif;
         }
@@ -352,13 +352,15 @@
             // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
             const filename = `WA_${accountLocation}_${initials}_${formattedDate}.jpg`;
 
-            // Expand all textareas to show full content before export
+            // Expand only textareas with content to show full text before export
             const textareas = form.querySelectorAll('textarea');
             const originalHeights = [];
             textareas.forEach((textarea, index) => {
                 originalHeights[index] = textarea.style.height;
-                textarea.style.height = 'auto';
-                textarea.style.height = textarea.scrollHeight + 'px';
+                if (textarea.value.trim() !== '') {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = textarea.scrollHeight + 'px';
+                }
             });
 
             // Fixed dimensions for consistent high-quality output
