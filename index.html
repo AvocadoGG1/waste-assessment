@@ -388,6 +388,12 @@
             // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
             const filename = `WA_${accountLocation}_${initials}_${formattedDate}.jpg`;
 
+            // Save original form width and set to fixed width for consistent export
+            const originalWidth = form.style.width;
+            const originalMaxWidth = form.style.maxWidth;
+            form.style.width = '850px';
+            form.style.maxWidth = '850px';
+
             // Replace textareas with divs to show full content
             const textareas = form.querySelectorAll('textarea');
             const replacements = [];
@@ -427,6 +433,10 @@
                     div.remove();
                 });
 
+                // Restore original form width
+                form.style.width = originalWidth;
+                form.style.maxWidth = originalMaxWidth;
+
                 // Create a new canvas with fixed dimensions
                 const resizedCanvas = document.createElement('canvas');
                 resizedCanvas.width = TARGET_WIDTH;
@@ -450,6 +460,11 @@
                     textarea.style.display = '';
                     div.remove();
                 });
+
+                // Restore original form width
+                form.style.width = originalWidth;
+                form.style.maxWidth = originalMaxWidth;
+
                 alert('Error creating image. Please try PDF export instead.');
                 console.error(error);
             });
