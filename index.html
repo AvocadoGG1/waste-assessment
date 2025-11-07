@@ -394,6 +394,13 @@
             form.style.width = '850px';
             form.style.maxWidth = '850px';
 
+            // Hide export buttons during capture
+            const exportButtons = form.querySelector('.export-buttons');
+            const originalButtonsDisplay = exportButtons ? exportButtons.style.display : '';
+            if (exportButtons) {
+                exportButtons.style.display = 'none';
+            }
+
             // Replace textareas with divs to show full content
             const textareas = form.querySelectorAll('textarea');
             const replacements = [];
@@ -437,6 +444,11 @@
                 form.style.width = originalWidth;
                 form.style.maxWidth = originalMaxWidth;
 
+                // Restore export buttons
+                if (exportButtons) {
+                    exportButtons.style.display = originalButtonsDisplay;
+                }
+
                 // Create a new canvas with fixed dimensions
                 const resizedCanvas = document.createElement('canvas');
                 resizedCanvas.width = TARGET_WIDTH;
@@ -464,6 +476,11 @@
                 // Restore original form width
                 form.style.width = originalWidth;
                 form.style.maxWidth = originalMaxWidth;
+
+                // Restore export buttons
+                if (exportButtons) {
+                    exportButtons.style.display = originalButtonsDisplay;
+                }
 
                 alert('Error creating image. Please try PDF export instead.');
                 console.error(error);
