@@ -534,17 +534,45 @@
             const year = dateParts[0];
             const formattedDate = `${month}${day}${year}`;
 
-            // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
+            // Create filename
             const filename = `WA_${accountLocation}_${initials}_${formattedDate}.jpg`;
 
-            // Expand only textareas with content to show full text before export
+            // Save original form width and set to fixed width for consistent export
+            const originalWidth = form.style.width;
+            const originalMaxWidth = form.style.maxWidth;
+            form.style.width = '850px';
+            form.style.maxWidth = '850px';
+
+            // Hide export buttons during capture
+            const exportButtons = form.querySelector('.export-buttons');
+            const originalButtonsDisplay = exportButtons ? exportButtons.style.display : '';
+            if (exportButtons) {
+                exportButtons.style.display = 'none';
+            }
+
+            // Replace textareas with divs to show full content
             const textareas = form.querySelectorAll('textarea');
-            const originalHeights = [];
-            textareas.forEach((textarea, index) => {
-                originalHeights[index] = textarea.style.height;
+            const replacements = [];
+
+            textareas.forEach((textarea) => {
                 if (textarea.value.trim() !== '') {
-                    textarea.style.height = 'auto';
-                    textarea.style.height = textarea.scrollHeight + 'px';
+                    const div = document.createElement('div');
+                    div.style.cssText = window.getComputedStyle(textarea).cssText;
+                    div.style.whiteSpace = 'pre-wrap';
+                    div.style.wordWrap = 'break-word';
+                    div.style.height = 'auto';
+                    div.style.minHeight = 'auto';
+                    div.style.overflow = 'visible';
+                    div.style.border = '1px solid #ddd';
+                    div.style.borderRadius = '4px';
+                    div.style.padding = '8px';
+                    div.textContent = textarea.value;
+
+                    const parent = textarea.parentNode;
+                    const nextSibling = textarea.nextSibling;
+                    parent.insertBefore(div, textarea);
+                    parent.removeChild(textarea);
+                    replacements.push({ div, parent, nextSibling, textarea });
                 }
             });
 
@@ -552,42 +580,74 @@
             const TARGET_WIDTH = 2550;
             const TARGET_HEIGHT = 3300;
 
-            html2canvas(form, {
-                scale: 3,
-                backgroundColor: '#ffffff',
-                logging: false,
-                useCORS: true
-            }).then(canvas => {
-                // Restore original textarea heights
-                textareas.forEach((textarea, index) => {
-                    textarea.style.height = originalHeights[index];
+            // Wait for browser to render before capturing
+            setTimeout(() => {
+                html2canvas(form, {
+                    scale: 3,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: true
+                }).then(canvas => {
+                    // Restore textareas and remove replacement divs
+                    replacements.forEach(({ div, parent, nextSibling, textarea }) => {
+                        parent.removeChild(div);
+                        if (nextSibling) {
+                            parent.insertBefore(textarea, nextSibling);
+                        } else {
+                            parent.appendChild(textarea);
+                        }
+                    });
+
+                    // Restore original form width
+                    form.style.width = originalWidth;
+                    form.style.maxWidth = originalMaxWidth;
+
+                    // Restore export buttons
+                    if (exportButtons) {
+                        exportButtons.style.display = originalButtonsDisplay;
+                    }
+
+                    // Create a new canvas with fixed dimensions
+                    const resizedCanvas = document.createElement('canvas');
+                    resizedCanvas.width = TARGET_WIDTH;
+                    resizedCanvas.height = TARGET_HEIGHT;
+                    const ctx = resizedCanvas.getContext('2d');
+
+                    // Fill with white background
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+                    // Draw the original canvas scaled to fit the target dimensions
+                    ctx.drawImage(canvas, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+
+                    const link = document.createElement('a');
+                    link.download = filename;
+                    link.href = resizedCanvas.toDataURL('image/jpeg', 0.95);
+                    link.click();
+                }).catch(error => {
+                    // Restore textareas and remove divs even on error
+                    replacements.forEach(({ div, parent, nextSibling, textarea }) => {
+                        parent.removeChild(div);
+                        if (nextSibling) {
+                            parent.insertBefore(textarea, nextSibling);
+                        } else {
+                            parent.appendChild(textarea);
+                        }
+                    });
+
+                    // Restore original form width
+                    form.style.width = originalWidth;
+                    form.style.maxWidth = originalMaxWidth;
+
+                    // Restore export buttons
+                    if (exportButtons) {
+                        exportButtons.style.display = originalButtonsDisplay;
+                    }
+
+                    alert('Error creating image. Please try again.');
+                    console.error(error);
                 });
-
-                // Create a new canvas with fixed dimensions
-                const resizedCanvas = document.createElement('canvas');
-                resizedCanvas.width = TARGET_WIDTH;
-                resizedCanvas.height = TARGET_HEIGHT;
-                const ctx = resizedCanvas.getContext('2d');
-
-                // Fill with white background
-                ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-
-                // Draw the original canvas scaled to fit the target dimensions
-                ctx.drawImage(canvas, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
-
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = resizedCanvas.toDataURL('image/jpeg', 0.95);
-                link.click();
-            }).catch(error => {
-                // Restore original textarea heights even on error
-                textareas.forEach((textarea, index) => {
-                    textarea.style.height = originalHeights[index];
-                });
-                alert('Error creating image. Please try PDF export instead.');
-                console.error(error);
-            });
+            }, 200); // Wait 200ms for layout to update and buttons to hide
         }
     </script>
 </body>
