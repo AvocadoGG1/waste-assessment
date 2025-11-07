@@ -227,6 +227,13 @@
                 resize: none !important;
             }
         }
+        /* Force horizontal layout during export regardless of viewport size */
+        .force-horizontal-layout .info-row {
+            grid-template-columns: 1fr 1fr 1fr !important;
+        }
+        .force-horizontal-layout .checklist-item {
+            grid-template-columns: 250px 120px 1fr !important;
+        }
         @media (max-width: 768px) {
             .info-row {
                 grid-template-columns: 1fr;
@@ -399,6 +406,9 @@
             form.style.width = '850px';
             form.style.maxWidth = '850px';
 
+            // Force horizontal layout to override responsive media query
+            form.classList.add('force-horizontal-layout');
+
             // Hide export buttons during capture
             const exportButtons = form.querySelector('.export-buttons');
             const originalButtonsDisplay = exportButtons ? exportButtons.style.display : '';
@@ -457,6 +467,9 @@
                     // Restore original form width
                     form.style.width = originalWidth;
                     form.style.maxWidth = originalMaxWidth;
+
+                    // Remove horizontal layout class
+                    form.classList.remove('force-horizontal-layout');
 
                     // Restore export buttons
                     if (exportButtons) {
@@ -502,6 +515,9 @@
                     form.style.width = originalWidth;
                     form.style.maxWidth = originalMaxWidth;
 
+                    // Remove horizontal layout class
+                    form.classList.remove('force-horizontal-layout');
+
                     // Restore export buttons
                     if (exportButtons) {
                         exportButtons.style.display = originalButtonsDisplay;
@@ -542,6 +558,9 @@
             const originalMaxWidth = form.style.maxWidth;
             form.style.width = '850px';
             form.style.maxWidth = '850px';
+
+            // Force horizontal layout to override responsive media query
+            form.classList.add('force-horizontal-layout');
 
             // Hide export buttons during capture
             const exportButtons = form.querySelector('.export-buttons');
@@ -602,6 +621,9 @@
                     form.style.width = originalWidth;
                     form.style.maxWidth = originalMaxWidth;
 
+                    // Remove horizontal layout class
+                    form.classList.remove('force-horizontal-layout');
+
                     // Restore export buttons
                     if (exportButtons) {
                         exportButtons.style.display = originalButtonsDisplay;
@@ -638,6 +660,9 @@
                     // Restore original form width
                     form.style.width = originalWidth;
                     form.style.maxWidth = originalMaxWidth;
+
+                    // Remove horizontal layout class
+                    form.classList.remove('force-horizontal-layout');
 
                     // Restore export buttons
                     if (exportButtons) {
