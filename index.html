@@ -170,16 +170,52 @@
             font-size: 12px;
         }
         @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
             body {
                 background: white;
                 padding: 0;
+                margin: 0;
             }
             .export-buttons {
-                display: none;
+                display: none !important;
             }
             .form-container {
                 box-shadow: none;
-                padding: 20px;
+                padding: 15px;
+                margin: 0;
+                max-width: 100%;
+                transform: scale(0.85);
+                transform-origin: top left;
+                width: 118%;
+            }
+            .header {
+                padding-bottom: 10px;
+                margin-bottom: 15px;
+            }
+            .section-title {
+                padding: 8px 12px;
+                margin-bottom: 12px;
+                font-size: 14px;
+            }
+            .info-row {
+                margin-bottom: 15px;
+            }
+            .checklist-item {
+                margin-bottom: 10px;
+            }
+            table {
+                margin-bottom: 12px;
+                font-size: 12px;
+            }
+            th, td {
+                padding: 6px;
+            }
+            textarea {
+                border: 1px solid #ddd !important;
             }
         }
         @media (max-width: 768px) {
@@ -367,7 +403,9 @@
             const TARGET_WIDTH = 2550;
             const TARGET_HEIGHT = 3300;
 
-            html2canvas(form, {
+            // Wait for browser to render expanded textareas before capturing
+            setTimeout(() => {
+                html2canvas(form, {
                 scale: 3,
                 backgroundColor: '#ffffff',
                 logging: false,
@@ -403,6 +441,7 @@
                 alert('Error creating image. Please try PDF export instead.');
                 console.error(error);
             });
+            }, 100); // Wait 100ms for layout to update
         }
     </script>
 </body>
