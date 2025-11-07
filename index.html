@@ -157,7 +157,7 @@
             resize: vertical;
         }
         textarea {
-            min-height: 100px;
+            min-height: 60px;
             resize: vertical;
             font-family: Arial, sans-serif;
         }
@@ -352,6 +352,15 @@
             // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
             const filename = `WA_${accountLocation}_${initials}_${formattedDate}.jpg`;
 
+            // Expand all textareas to show full content before export
+            const textareas = form.querySelectorAll('textarea');
+            const originalHeights = [];
+            textareas.forEach((textarea, index) => {
+                originalHeights[index] = textarea.style.height;
+                textarea.style.height = 'auto';
+                textarea.style.height = textarea.scrollHeight + 'px';
+            });
+
             // Fixed dimensions for consistent high-quality output
             const TARGET_WIDTH = 2550;
             const TARGET_HEIGHT = 3300;
@@ -362,6 +371,11 @@
                 logging: false,
                 useCORS: true
             }).then(canvas => {
+                // Restore original textarea heights
+                textareas.forEach((textarea, index) => {
+                    textarea.style.height = originalHeights[index];
+                });
+
                 // Create a new canvas with fixed dimensions
                 const resizedCanvas = document.createElement('canvas');
                 resizedCanvas.width = TARGET_WIDTH;
@@ -380,6 +394,10 @@
                 link.href = resizedCanvas.toDataURL('image/jpeg', 0.95);
                 link.click();
             }).catch(error => {
+                // Restore original textarea heights even on error
+                textareas.forEach((textarea, index) => {
+                    textarea.style.height = originalHeights[index];
+                });
                 alert('Error creating image. Please try PDF export instead.');
                 console.error(error);
             });
