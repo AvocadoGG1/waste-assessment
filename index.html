@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title>RECYKOOL Waste Assessment</title>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -369,7 +370,40 @@
 
     <script>
         function exportPDF() {
-            window.print();
+            const form = document.getElementById('assessment-form');
+
+            // Get filename components
+            const accountLocation = document.getElementById('account-location').value;
+            const initials = document.getElementById('initials').value;
+            const dateValue = document.getElementById('filename-date').value;
+
+            // Validate required fields
+            if (!accountLocation || !initials || !dateValue) {
+                alert('Please fill in all File Naming Information fields:\n- Account # / Location #\n- Initials\n- Date');
+                return;
+            }
+
+            // Convert date from YYYY-MM-DD to MDDYYYY
+            const dateParts = dateValue.split('-');
+            const month = dateParts[1];
+            const day = dateParts[2];
+            const year = dateParts[0];
+            const formattedDate = `${month}${day}${year}`;
+
+            // Create filename: WA_[Location# or Account#]_[Initials]_[MDDYYYY]
+            const filename = `WA_${accountLocation}_${initials}_${formattedDate}.pdf`;
+
+            // Configure PDF options
+            const opt = {
+                margin: 0.5,
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            // Generate PDF
+            html2pdf().set(opt).from(form).save();
         }
 
         function exportImage() {
